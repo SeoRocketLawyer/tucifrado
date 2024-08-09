@@ -10,8 +10,10 @@ import (
 )
 
 func StartApp() {
-	a := app.New()
+	a := app.NewWithID("com.seorocketlawyer.tucifrado")
 	w := a.NewWindow("Tu cifrado Encripta y Desencripta")
+
+	w.Resize(fyne.NewSize(800, 600))
 
 	passwordEntry := widget.NewPasswordEntry()
 	passwordEntry.SetPlaceHolder("Introducir Password")

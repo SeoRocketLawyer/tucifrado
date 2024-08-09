@@ -1,7 +1,7 @@
 package main
 
 import (
-	"file-encryptor/internal/ui"
+	"tucifrado/internal/ui"
 )
 
 func main() {

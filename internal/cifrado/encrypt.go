@@ -4,17 +4,24 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha256"
 	"io"
-	"io/ioutil"
+	"os"
 )
 
+func deriveKey(password string) []byte {
+	hash := sha256.Sum256([]byte(password))
+	return hash[:]
+}
+
 func EncryptFile(password, filePath string) error {
-	data, err := ioutil.ReadFile(filePath)
+	key := deriveKey(password)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
 
-	block, err := aes.NewCipher([]byte(password))
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return err
 	}
@@ -30,8 +37,9 @@ func EncryptFile(password, filePath string) error {
 	}
 
 	encryptedData := gcm.Seal(nonce, nonce, data, nil)
+
 	encryptedFilePath := filePath + ".enc"
-	err = ioutil.WriteFile(encryptedFilePath, encryptedData, 0644)
+	err = os.WriteFile(encryptedFilePath, encryptedData, 0644)
 	if err != nil {
 		return err
 	}

@@ -4,16 +4,17 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"fmt"
-	"io/ioutil"
+	"os"
 )
 
 func DecryptFile(password, filePath string) error {
-	encryptedData, err := ioutil.ReadFile(filePath)
+	key := deriveKey(password)
+	encryptedData, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
 
-	block, err := aes.NewCipher([]byte(password))
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return err
 	}
@@ -29,13 +30,14 @@ func DecryptFile(password, filePath string) error {
 	}
 
 	nonce, ciphertext := encryptedData[:nonceSize], encryptedData[nonceSize:]
+
 	data, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
 		return err
 	}
 
 	decryptedFilePath := filePath + ".dec"
-	err = ioutil.WriteFile(decryptedFilePath, data, 0644)
+	err = os.WriteFile(decryptedFilePath, data, 0644)
 	if err != nil {
 		return err
 	}

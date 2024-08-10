@@ -5,6 +5,7 @@ import (
 	"crypto/cipher"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func DecryptFile(password, filePath string) error {
@@ -36,8 +37,17 @@ func DecryptFile(password, filePath string) error {
 		return err
 	}
 
-	decryptedFilePath := filePath + ".dec"
-	err = os.WriteFile(decryptedFilePath, data, 0644)
+	// Obtener el nombre original del archivo (sin la extensión .enc)
+	originalFilePath := filePath[:len(filePath)-len(filepath.Ext(filePath))]
+
+	// Reemplazar el archivo encriptado con el archivo desencriptado
+	err = os.WriteFile(originalFilePath, data, 0644)
+	if err != nil {
+		return err
+	}
+
+	// Opcional: Eliminar el archivo encriptado después de desencriptar
+	err = os.Remove(filePath)
 	if err != nil {
 		return err
 	}

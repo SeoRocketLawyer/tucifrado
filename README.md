@@ -11,7 +11,7 @@ Este proyecto proporciona una aplicación de código abierto para encriptar y de
 ## Componentes Excluidos
 
 Por razones de seguridad y propiedad, los siguientes componentes se han excluido de este repositorio:
-- Lógica detallada de encriptación y desencriptación (internal/secreto/).
+- Lógica detallada de encriptación y desencriptación (/secreto/).
 - Archivos de configuración y credenciales.
 
 ## Uso

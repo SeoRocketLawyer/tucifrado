@@ -5,6 +5,7 @@
 *.so
 *.dylib
 *.test
+*.env
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
@@ -26,4 +27,4 @@ settings.conf
 credentials/
 
 # Exclude secrets directory
-internal/secrets/
+/secreto

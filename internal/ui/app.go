@@ -1,22 +1,29 @@
 package ui
 
 import (
+	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	"tucifrado/internal/cifrado"
+	"tucifrado/internal/version"
 )
 
 func StartApp() {
 	a := app.NewWithID("com.seorocketlawyer.tucifrado")
-	w := a.NewWindow("Tu cifrado Encripta y Desencripta")
+
+	windowTitle := fmt.Sprintf("Tu Cifrando Encripta y Desencripta - Version: %s", version.Version)
+	w := a.NewWindow(windowTitle)
 
 	w.Resize(fyne.NewSize(800, 600))
 
 	passwordEntry := widget.NewPasswordEntry()
-	passwordEntry.SetPlaceHolder("Introducir Password")
+	passwordEntry.SetPlaceHolder("Introducir contraseña")
+
+	confirmPasswordEntry := widget.NewPasswordEntry()
+	confirmPasswordEntry.SetPlaceHolder("Confirma la contraseña")
 
 	fileLabel := widget.NewLabel("No hay archivo seleccionado")
 	var selectedFile string
@@ -37,8 +44,13 @@ func StartApp() {
 			dialog.ShowInformation("Error", "Es necesario elegir un archivo", w)
 			return
 		}
-		if passwordEntry.Text == "" {
-			dialog.ShowInformation("Error", "Es necesario introducir una contraseña", w)
+		if passwordEntry.Text == "" || confirmPasswordEntry.Text == "" {
+			dialog.ShowInformation("Error", "Es necesario introducir la contraseña", w)
+			return
+		}
+
+		if passwordEntry.Text != confirmPasswordEntry.Text {
+			dialog.ShowInformation("Error", "Las contraseñas no coinciden", w)
 			return
 		}
 		err := cifrado.EncryptFile(passwordEntry.Text, selectedFile)
@@ -47,6 +59,9 @@ func StartApp() {
 			return
 		}
 		dialog.ShowInformation("Éxito", "Archivo encriptado con éxito", w)
+
+		passwordEntry.SetText("")
+		confirmPasswordEntry.SetText("")
 	})
 
 	decryptButton := widget.NewButton("Desencriptar", func() {
@@ -64,10 +79,14 @@ func StartApp() {
 			return
 		}
 		dialog.ShowInformation("Éxito", "Archivo desencriptado con éxito", w)
+
+		passwordEntry.SetText("")
+		confirmPasswordEntry.SetText("")
 	})
 
 	content := container.NewVBox(
 		passwordEntry,
+		confirmPasswordEntry,
 		selectFileButton,
 		fileLabel,
 		encryptButton,

@@ -93,6 +93,22 @@ func StartApp() {
 		decryptButton,
 	)
 
+	showLicensePopup(w, content)
+
 	w.SetContent(content)
 	w.ShowAndRun()
+}
+
+func showLicensePopup(w fyne.Window, content fyne.CanvasObject) {
+
+	licenseText := `Al usar esta aplicación, aceptas que se entrega "tal cual" y su uso es bajo tu propia responsabilidad.`
+	licenseLabel := widget.NewLabel(licenseText)
+	acceptButton := widget.NewButton("Aceptar", func() {
+		w.SetContent(content)
+		w.Show()
+	})
+	licenseDialog := dialog.NewCustom("Términos de la Licencia", "", container.NewVBox(licenseLabel, acceptButton), w)
+
+	licenseDialog.SetDismissText("")
+	licenseDialog.Show()
 }
